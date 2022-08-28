@@ -36,14 +36,15 @@ if difficulty[1] != 0:
 # getting copy after reductions are completed
 final = gen.board.copy()
 
-# printing out complete board (solution)
-print("The initial board before removals was: ")
-
 url = 'https://firestore.googleapis.com/v1/projects/sudoku-d2d5c/databases/(default)/documents/puzzles'
+# set these before executing!
+auth = '321321321321321'
+timestamp = '2022-00-00T18:00:00.000Z'
+
 fields = {
-    'cells': initial.mapToResponse(),
+    'cells': final.mapToResponse(),
     'date_added': {
-        'timestampValue': '2022-08-28T18:00:00.000Z'
+        'timestampValue': timestamp
     },
     'difficulty': {
         'stringValue': sys.argv[2]
@@ -52,14 +53,7 @@ fields = {
 body = {
     'fields': fields
 }
-headers = {'Authorization': 'Bearer 123'}
+headers = {'Authorization': 'Bearer ' + auth}
 
-print(json.dumps(body))
-
-# response = requests.post(url, data=json.dumps(body), headers=headers)
-
-# response = requests.post(url, json=json, headers=headers)
-# print(response)
-
-# printing out board after reduction
-# print("The generated board after removals was: \r\n\r\n{0}".format(final))
+response = requests.post(url, json=body, headers=headers)
+print(response)
