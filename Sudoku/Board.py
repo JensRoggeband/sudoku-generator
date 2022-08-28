@@ -124,6 +124,27 @@ class Board:
             output.append('|'.join(new_set))
         return '\r\n'.join(output)
 
+    def mapToResponse(self):
+        values = []
+        for index, row in self.rows.items():
+            my_set = map(str, [x.value for x in row])
+            for x in my_set:
+                # fields = []
+                mapValues = {}
+                if x == '0':
+                    fields = {'hardValue': {'booleanValue': false }}
+                else:
+                    fields = {'correctValue': {'integerValue': x }}
+                mapValues['fields'] = fields
+                mapValueDict = {'mapValues': mapValues}
+                values.append(mapValueDict)
+
+        return {
+            'arrayValue': {
+                'values': values
+            }
+        }
+
     # exporting puzzle to a html table for prettier visualization
     def html(self):
         html = "<table>"

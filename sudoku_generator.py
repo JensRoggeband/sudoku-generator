@@ -1,5 +1,7 @@
 # !/usr/bin/python
 import sys
+import requests
+import json
 from Sudoku.Generator import *
 
 # setting difficulties and their cutoffs for each solve method
@@ -35,7 +37,29 @@ if difficulty[1] != 0:
 final = gen.board.copy()
 
 # printing out complete board (solution)
-print("The initial board before removals was: \r\n\r\n{0}".format(initial))
+print("The initial board before removals was: ")
+
+url = 'https://firestore.googleapis.com/v1/projects/sudoku-d2d5c/databases/(default)/documents/puzzles'
+fields = {
+    'cells': initial.mapToResponse(),
+    'date_added': {
+        'timestampValue': '2022-08-28T18:00:00.000Z'
+    },
+    'difficulty': {
+        'stringValue': sys.argv[2]
+    }
+}
+body = {
+    'fields': fields
+}
+headers = {'Authorization': 'Bearer 123'}
+
+print(json.dumps(body))
+
+# response = requests.post(url, data=json.dumps(body), headers=headers)
+
+# response = requests.post(url, json=json, headers=headers)
+# print(response)
 
 # printing out board after reduction
-print("The generated board after removals was: \r\n\r\n{0}".format(final))
+# print("The generated board after removals was: \r\n\r\n{0}".format(final))
