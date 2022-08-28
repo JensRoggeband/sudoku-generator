@@ -36,8 +36,8 @@ if difficulty[1] != 0:
 # getting copy after reductions are completed
 final = gen.board.copy()
 
-url = 'https://firestore.googleapis.com/v1/projects/sudoku-d2d5c/databases/(default)/documents/puzzles'
 # set these before executing!
+url = ''
 auth = '321321321321321'
 timestamp = '2022-00-00T18:00:00.000Z'
 
