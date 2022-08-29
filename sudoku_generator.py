@@ -6,10 +6,9 @@ from Sudoku.Generator import *
 
 # setting difficulties and their cutoffs for each solve method
 difficulties = {
-    'easy': (35, 0), 
-    'medium': (81, 5), 
-    'hard': (81, 10), 
-    'extreme': (81, 15)
+    'easy': (81, 5), 
+    'medium': (81, 10), 
+    'hard': (81, 15)
 }
 
 # getting desired difficulty from command line
