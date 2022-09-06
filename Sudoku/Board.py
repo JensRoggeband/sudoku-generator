@@ -46,31 +46,31 @@ class Board:
 
     # returning cells in puzzle that are not set to zero
     def get_used_cells(self):
-        return [x for x in self.cells if x.hardvalue]
+        return [x for x in self.cells if x.value != 0]
 
     # returning cells in puzzle that are set to zero
     def get_unused_cells(self):
-        return [x for x in self.cells if not x.hardvalue]
+        return [x for x in self.cells if x.value == 0]
 
     # returning all possible values that could be assigned to the
     # cell provided as argument
     def get_possibles(self, cell):
         possibilities = self.rows[cell.row] + self.columns[cell.col] + self.boxes[cell.box]
-        excluded = set([x.value for x in possibilities if x.hardvalue and x.value != cell.value])
+        excluded = set([x.value for x in possibilities if x.value != 0 and x.value != cell.value])
         results = [x for x in range(1, 10) if x not in excluded]
         return results
 
     # calculates the density of a specific cell's context
     def get_density(self, cell):
         possibilities = self.rows[cell.row] + self.columns[cell.col] + self.boxes[cell.box]
-        if cell.hardvalue:
+        if cell.value != 0:
             possibilities.remove(cell)
-        return len([x for x in set(possibilities) if x.hardvalue]) / 20.0
+        return len([x for x in set(possibilities) if x.value != 0]) / 20.0
 
     # gets complement of possibles, values that cell cannot be
     def get_excluded(self, cell):
         possibilities = self.rows[cell.row] + self.columns[cell.col] + self.boxes[cell.box]
-        return set([x.value for x in possibilities if x.hardvalue and x.value != cell.value])
+        return set([x.value for x in possibilities if x.value != 0 and x.value != cell.value])
 
     # swaps two rows
     def swap_row(self, row_index1, row_index2, allow=False):
@@ -108,7 +108,6 @@ class Board:
         for row in range(0, len(self.rows)):
             for col in range(0, len(self.columns)):
                 b.rows[row][col].value = self.rows[row][col].value
-                b.rows[row][col].hardvalue = self.rows[row][col].hardvalue
         return b
 
     # returns string representation
@@ -124,6 +123,17 @@ class Board:
                     new_set.append(x)
             output.append('|'.join(new_set))
         return '\r\n'.join(output)
+
+    def set_zeros_to_soft_value(self, final_board): 
+        b = Board()
+        for row in range(0, len(final_board.rows)):
+            for col in range(0, len(final_board.columns)):
+                b.rows[row][col].value = self.rows[row][col].value
+                if (final_board.rows[row][col].value == 0):
+                    b.rows[row][col].hardvalue = False
+                else:
+                    b.rows[row][col].hardvalue = True
+        return b
 
     def mapToResponse(self):
         values = []

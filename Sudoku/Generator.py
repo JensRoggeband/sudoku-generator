@@ -63,7 +63,7 @@ class Generator:
         random.shuffle(cells)
         for cell in cells:
             if len(self.board.get_possibles(cell)) == 1:
-                cell.hardvalue = False
+                cell.value = 0
                 cutoff -= 1
             if cutoff == 0:
                 break
@@ -103,7 +103,7 @@ class Generator:
 
             # if every value was checked and puzzle remains unique, we can remove it
             if not ambiguous:
-                cell.hardvalue = False
+                cell.value = 0
                 cutoff -= 1
 
             # if we ever meet the cutoff limit we can break out

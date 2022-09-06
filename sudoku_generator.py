@@ -23,6 +23,8 @@ gen.randomize(100)
 # getting a copy before slots are removed
 initial = gen.board.copy()
 
+print("The generated board: \r\n\r\n{0}".format(initial))
+
 # applying logical reduction with corresponding difficulty cutoff
 gen.reduce_via_logical(difficulty[0])
 
@@ -35,15 +37,18 @@ if difficulty[1] != 0:
 # getting copy after reductions are completed
 final = gen.board.copy()
 
+generated = initial.set_zeros_to_soft_value(final)
+
 # set these before executing!
 url = ''
 auth = '321321321321321'
 timestamp = '2022-00-00T18:00:00.000Z'
 
+url = 'https://firestore.googleapis.com/v1/projects/sudoku-d2d5c/databases/(default)/documents/puzzles'
 fields = {
-    'cells': final.mapToResponse(),
+    'cells': generated.map_to_response(),
     'date_added': {
-        'timestampValue': timestamp
+        'timestampValue': '2022-08-28T18:00:00.000Z'
     },
     'difficulty': {
         'stringValue': sys.argv[2]
@@ -52,7 +57,14 @@ fields = {
 body = {
     'fields': fields
 }
-headers = {'Authorization': 'Bearer ' + auth}
+headers = {'Authorization': 'Bearer 123'}
 
-response = requests.post(url, json=body, headers=headers)
-print(response)
+print(json.dumps(body))
+
+# response = requests.post(url, data=json.dumps(body), headers=headers)
+
+# response = requests.post(url, json=json, headers=headers)
+# print(response)
+
+# printing out board after reduction
+print("The generated board after removals was: \r\n\r\n{0}".format(final))
