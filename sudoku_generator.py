@@ -11,60 +11,71 @@ difficulties = {
     'hard': (81, 15)
 }
 
+# set these before executing!
+url = ''
+auth = ''
+id = -1000 # check latest ID online first 
+timestamp = ''
+# set these before executing!
+
 # getting desired difficulty from command line
 difficulty = difficulties[sys.argv[2]]
 
-# constructing generator object from puzzle file (space delimited columns, line delimited rows)
-gen = Generator(sys.argv[1])
+if len(sys.argv) > 3:
+    amount_of_puzzles = int(sys.argv[3])
+else:
+    amount_of_puzzles = 1
 
-# applying 100 random transformations to puzzle
-gen.randomize(100)
+print("We are going to generate " + str(amount_of_puzzles) + " puzzle(s)")
 
-# getting a copy before slots are removed
-initial = gen.board.copy()
+for x in range(amount_of_puzzles):
+    id = id + 1
 
-print("The generated board: \r\n\r\n{0}".format(initial))
+    # constructing generator object from puzzle file (space delimited columns, line delimited rows)
+    gen = Generator(sys.argv[1])
 
-# applying logical reduction with corresponding difficulty cutoff
-gen.reduce_via_logical(difficulty[0])
+    # applying 100 random transformations to puzzle
+    gen.randomize(100)
 
-# catching zero case
-if difficulty[1] != 0:
-    # applying random reduction with corresponding difficulty cutoff
-    gen.reduce_via_random(difficulty[1])
+    # getting a copy before slots are removed
+    initial = gen.board.copy()
 
+    print("The generated board: \r\n\r\n{0}".format(initial))
 
-# getting copy after reductions are completed
-final = gen.board.copy()
+    # applying logical reduction with corresponding difficulty cutoff
+    gen.reduce_via_logical(difficulty[0])
 
-generated = initial.set_zeros_to_soft_value(final)
+    # catching zero case
+    if difficulty[1] != 0:
+        # applying random reduction with corresponding difficulty cutoff
+        gen.reduce_via_random(difficulty[1])
 
-# set these before executing!
-url = ''
-auth = '321321321321321'
-timestamp = '2022-00-00T18:00:00.000Z'
+    # getting copy after reductions are completed
+    final = gen.board.copy()
 
-url = 'https://firestore.googleapis.com/v1/projects/sudoku-d2d5c/databases/(default)/documents/puzzles'
-fields = {
-    'cells': generated.map_to_response(),
-    'date_added': {
-        'timestampValue': '2022-08-28T18:00:00.000Z'
-    },
-    'difficulty': {
-        'stringValue': sys.argv[2]
+    generated = initial.set_zeros_to_soft_value(final)
+
+    fields = {
+        'id': {
+            'stringValue': str(id)
+        },
+        'cells': generated.map_to_response(),
+        'date_added': {
+            'timestampValue': timestamp
+        },
+        'difficulty': {
+            'stringValue': sys.argv[2]
+        }
     }
-}
-body = {
-    'fields': fields
-}
-headers = {'Authorization': 'Bearer 123'}
+    body = {
+        'fields': fields
+    }
+    headers = {'Authorization': 'Bearer ' + auth}
 
-print(json.dumps(body))
+    # print(json.dumps(body))
 
-# response = requests.post(url, data=json.dumps(body), headers=headers)
+    response = requests.post(url, json=body, headers=headers)
+    print(response)
 
-# response = requests.post(url, json=json, headers=headers)
-# print(response)
-
-# printing out board after reduction
-print("The generated board after removals was: \r\n\r\n{0}".format(final))
+    # printing out board after reduction
+    print("The generated board after removals was: \r\n\r\n{0}".format(final))

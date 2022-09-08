@@ -135,7 +135,7 @@ class Board:
                     b.rows[row][col].hardvalue = True
         return b
 
-    def mapToResponse(self):
+    def map_to_response(self):
         values = []
         for index, row in self.rows.items():
             for x in row:
